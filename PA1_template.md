@@ -1,13 +1,9 @@
----
-title: "Reproducible Research Assignment 1"
-output:
-  html_document:
-    keep_md: yes
----
+# Reproducible Research Assignment 1
 
 
 Load dplyr package and Read the file activity.csv.
-```{r message=FALSE}
+
+```r
 library(dplyr)
 data <- read.csv("activity.csv", header=TRUE, stringsAsFactors=FALSE)
 ```
@@ -15,40 +11,54 @@ data <- read.csv("activity.csv", header=TRUE, stringsAsFactors=FALSE)
 Prepare the data by using dplyr package. 
 Do a group by on date.
 
-```{r echo=TRUE}
+
+```r
 data$date <- as.Date(data$date)
 grouped_date <- group_by(data, date)
 ```
 
 ## Calculate Total number of steps taken per day
 Use summarize function in dplyr to add the steps for all the interval on a day.
-```{r echo=TRUE}
+
+```r
 steps_per_day <- summarize(grouped_date, sum(steps, na.rm=TRUE))
 names(steps_per_day) <- c("Date","TotalSteps")
-
 ```
 
 Draw the histogram using base plot system.
-```{r echo=TRUE}
-hist(steps_per_day$TotalSteps, xlab="Number of Steps", main="Histogram for number of steps taken per day", col="red")
 
+```r
+hist(steps_per_day$TotalSteps, xlab="Number of Steps", main="Histogram for number of steps taken per day", col="red")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
 
 Mean of total number of steps taken per day:
-```{r echo=TRUE}
+
+```r
 mean(steps_per_day$TotalSteps)
 ```
+
+```
+## [1] 9354.23
+```
 Median of total number of steps taken per day:
-```{r echo=TRUE}
+
+```r
 median(steps_per_day$TotalSteps)
+```
+
+```
+## [1] 10395
 ```
 
 ## Average daily activity pattern
 
 Calculating steps per interval across all days using dplyr package.
 
-```{r echo=TRUE}
+
+```r
 grouped_interval <- group_by(data,interval)
 steps_per_interval <- summarize(grouped_interval,mean(steps, na.rm=TRUE))
 names(steps_per_interval) <- c("Interval", "Steps")
@@ -57,34 +67,45 @@ names(steps_per_interval) <- c("Interval", "Steps")
 
 Time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r echo=TRUE}
+
+```r
 plot(steps_per_interval$Interval,steps_per_interval$Steps, type="l", col="red" , xlab="Interval" , ylab="Mean of Steps per Interval across all days", xaxt="n")
 axis(side=1,at=seq(from=0, to=2400, by=50))
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 
 
 The 5-minute interval, on average across all the days that contains the maximum number of steps is
 
-```{r echo=TRUE}
+
+```r
 steps_per_interval$Interval[which.max(steps_per_interval$Steps)]
+```
+
+```
+## [1] 835
 ```
 
 
 ## Imputing missing values
 
-```{r echo=TRUE}
 
-```
 
 Total number of missing values in the dataset
-```{r echo=TRUE}
+
+```r
 sum(is.na(data$steps))
+```
+
+```
+## [1] 2304
 ```
 
 Use mean for the 5-minute interval to fill in NA values. The new dataset is data_witout_NA
 
-```{r echo=TRUE}
+
+```r
 data_witout_NA <- data
 for(x in 1:length(data_witout_NA$steps)) {
    if(is.na(data_witout_NA$steps[x])) {
@@ -93,27 +114,36 @@ for(x in 1:length(data_witout_NA$steps)) {
     data_witout_NA$steps[x] <- round(steps_per_interval$Steps[index])
   }
 }
-
 ```
 Histogram of the total number of steps after filling in missing values.
-```{r echo=TRUE}
+
+```r
 grouped_date_withoutNA <- group_by(data_witout_NA, date)
 steps_per_day_withoutNA <- summarize(grouped_date_withoutNA, sum(steps))
 names(steps_per_day_withoutNA) <- c("Date","TotalSteps")
 hist(steps_per_day_withoutNA$TotalSteps, xlab="Number of Steps", main="Histogram for number of steps (No NAs) taken per day", col="blue")
-
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+
 Mean of total number of steps taken per day. 
-```{r echo=TRUE}
+
+```r
 mean(steps_per_day_withoutNA$TotalSteps)
 ```
 
+```
+## [1] 10765.64
+```
+
 Median of total number of steps taken per day
-```{r echo=TRUE}
+
+```r
 median(steps_per_day_withoutNA$TotalSteps)
+```
 
-
+```
+## [1] 10762
 ```
 * By replacing NAs with mean of the interval across all the days, the mean and median increased slightly. Also total number of steps taken each day has obviously increased as we added extra numbers ( earlier NAs) for each day. This is depicted in the histogram.  
 
@@ -123,8 +153,8 @@ median(steps_per_day_withoutNA$TotalSteps)
 
 
 Add the dayType variable to dataset. The value can be Weekend or Weekday.
-```{r echo=TRUE}
 
+```r
 for(x in 1:length(data_witout_NA$steps)) {
     dayType <- weekdays(data_witout_NA$date[x])
     if(dayType == "Saturday" || dayType == "Sunday") {
@@ -134,28 +164,24 @@ for(x in 1:length(data_witout_NA$steps)) {
     }
   
 }
-
 ```
 
 Do a group by on dayType and Interval. 
-```{r echo=TRUE}
 
+```r
 grouped_week <- group_by(data_witout_NA, dayType, interval)
 week_data <- summarize(grouped_week,round(mean(steps)))
 names(week_data) <- c("dayType","interval", "steps")
-
 ```
 
 Panel containing a time series plot  of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis) using lattice plot system.
 
-```{r echo=TRUE}
 
-
+```r
 library(lattice)
 xyplot(steps ~ interval | dayType, data = week_data, layout = c(1, 2), ylab = "Number of steps", 
     main = "Average number of steps for all weekdays and weekends" ,xlab = "Interval", type="l" )
-
-
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-18-1.png) 
 
