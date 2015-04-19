@@ -1,4 +1,9 @@
-# Reproducible Research Assignment 1
+---
+title: "Reproducible Research Assignment 1"
+output:
+  html_document:
+    keep_md: yes
+---
 
 
 Load dplyr package and Read the file activity.csv.
@@ -31,7 +36,7 @@ Draw the histogram using base plot system.
 hist(steps_per_day$TotalSteps, xlab="Number of Steps", main="Histogram for number of steps taken per day", col="red")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
 
 
 Mean of total number of steps taken per day:
@@ -73,7 +78,7 @@ plot(steps_per_interval$Interval,steps_per_interval$Steps, type="l", col="red" ,
 axis(side=1,at=seq(from=0, to=2400, by=50))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png) 
 
 
 The 5-minute interval, on average across all the days that contains the maximum number of steps is
@@ -124,7 +129,7 @@ names(steps_per_day_withoutNA) <- c("Date","TotalSteps")
 hist(steps_per_day_withoutNA$TotalSteps, xlab="Number of Steps", main="Histogram for number of steps (No NAs) taken per day", col="blue")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
 
 Mean of total number of steps taken per day. 
 
@@ -183,5 +188,5 @@ xyplot(steps ~ interval | dayType, data = week_data, layout = c(1, 2), ylab = "N
     main = "Average number of steps for all weekdays and weekends" ,xlab = "Interval", type="l" )
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-18-1.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png) 
 
