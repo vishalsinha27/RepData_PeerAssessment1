@@ -1,10 +1,3 @@
----
-title: "Reproducible Research Assignment 1"
-output:
-  html_document:
-    keep_md: yes
----
-
 
 Load dplyr package and Read the file activity.csv.
 
